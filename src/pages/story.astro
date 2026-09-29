@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import { brand } from '../data/brand.js';
+---
+<Base path="/story/" title="The story" description={brand.short}>
+  <section>
+    <div class="eyebrow"><span class="lbl">The story</span></div>
+    <div style="max-width:var(--measure)">
+      {brand.statement.map((para) => (
+        <p style="font-size:clamp(19px,1.8vw,22px);line-height:1.66">{para}</p>
+      ))}
+      <p style="font-family:'Zen Kaku Gothic New',system-ui,sans-serif;font-weight:500;letter-spacing:.3em;text-transform:uppercase;font-size:11px;color:var(--citrine);margin-top:34px">&mdash; D.S.</p>
+    </div>
+  </section>
+</Base>

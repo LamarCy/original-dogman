@@ -1,0 +1,96 @@
+---
+import Base from '../../layouts/Base.astro';
+import { brand, categories, sculptures, releases, memorialGallery, ornaments, mailto } from '../../data/brand.js';
+
+export function getStaticPaths() {
+  return categories.map((c) => ({ params: { slug: c.slug }, props: { cat: c } }));
+}
+const { cat } = Astro.props;
+const jacket = cat.slug === 'wearables' ? releases.find((r) => r.status === 'sold') : null;
+const sculpts = cat.slug === 'pet-memorials' ? sculptures : [];
+const gallery = cat.slug === 'pet-memorials' ? memorialGallery
+              : cat.slug === 'ornaments' ? ornaments : [];
+const empty = !jacket && !sculpts.length && !gallery.length;
+---
+<Base path={`/releases/${cat.slug}/`} title={cat.label} description={cat.blurb}>
+  <section>
+    <div class="eyebrow"><span class="lbl">Releases &middot; {cat.label}</span></div>
+    <p class="lede">{cat.lede}</p>
+    <p>{cat.blurb}</p>
+  </section>
+
+  <hr class="rule" />
+
+  {jacket && (
+    <section>
+      <div class="eyebrow"><span class="lbl">Release {jacket.num} &middot; {jacket.year}</span></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(20px,3vw,44px);align-items:start">
+        <div>
+          <img src={jacket.image} alt={jacket.alt} width="1400" height="1400" />
+          <img src={jacket.detail} alt="Detail of the custom-printed lining." width="500" height="500"
+               style="width:58%;margin-top:12px;border:1px solid var(--rule)" />
+        </div>
+        <div>
+          <h3>{jacket.title}</h3>
+          <p style="margin:14px 0 16px"><span class="status sold">Sold</span></p>
+          <p>{jacket.description}</p>
+          <div class="lbl" style="margin-top:22px">Materials</div>
+          <p style="margin-top:6px">{jacket.materials}</p>
+          <div class="lbl" style="margin-top:18px">Provenance</div>
+          <p style="margin-top:6px">{jacket.provenance}</p>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {sculpts.map((s) => (
+    <section>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(20px,3vw,44px);align-items:center">
+        <div>
+          <h3>{s.title}</h3>
+          <p style="margin:14px 0 16px"><span class="status soon">By commission</span></p>
+          <p>{s.blurb}</p>
+          <p style="font-family:'Zen Kaku Gothic New',system-ui,sans-serif;font-weight:300;font-size:22px;letter-spacing:.04em;color:var(--cossack);margin-bottom:20px">{s.price}</p>
+          <a class="cta" href={mailto(`${brand.name} — sculpture commission`)}>Begin a commission</a>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,.55);border-radius:14px;padding:22px;background:rgba(255,255,255,.46);-webkit-backdrop-filter:blur(16px) saturate(170%);backdrop-filter:blur(16px) saturate(170%);box-shadow:0 10px 26px -16px rgba(44,59,42,.38), inset 0 1px 0 rgba(255,255,255,.8)">
+          <div class="lbl" style="margin-bottom:10px">How it goes</div>
+          <ol style="margin:0;padding-left:1.1em">
+            <li>Send the photographs you already have.</li>
+            <li>Approve the sculpture from proof images.</li>
+            <li>It arrives when it arrives, finished by hand.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  {gallery.length > 0 && (
+    <section>
+      <div class="eyebrow">
+        <span class="lbl">{cat.slug === 'ornaments' ? 'Cast so far' : 'A finished commission'}</span>
+      </div>
+      <p style="margin-bottom:24px">
+        {cat.slug === 'ornaments'
+          ? 'Cast small and finished by hand, the same as the larger work.'
+          : 'One piece, photographed from several sides. Yours is sculpted from your own dog.'}
+      </p>
+      <div style={`display:grid;gap:clamp(12px,1.8vw,20px);grid-template-columns:repeat(${gallery.length > 2 ? 'auto-fit,minmax(200px,1fr)' : 'auto-fit,minmax(240px,300px)'})`}>
+        {gallery.map((g) => (
+          <img src={g.src} alt={g.alt} loading="lazy" decoding="async"
+               style={`border:1px solid var(--rule);border-radius:10px;width:100%;object-fit:cover;height:${gallery.length > 2 ? '240px' : '340px'}`} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  {empty && (
+    <section><p>Nothing has been released here yet. It will be a small run like everything else.</p></section>
+  )}
+
+  <hr class="rule" />
+  <section style="text-align:center">
+    <p style="margin-inline:auto">A release is a small run. The list hears before anyone else.</p>
+    <a class="cta" href={mailto(`${brand.name} — next release`)}>Get first word</a>
+  </section>
+</Base>

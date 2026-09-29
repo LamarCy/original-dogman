@@ -1,0 +1,260 @@
+---
+import { brand, mailto, KIT_FORM_ID, categories } from '../data/brand.js';
+import OrbNav from '../components/OrbNav.astro';
+const { title, description = brand.line, path = '/' } = Astro.props;
+const canonical = new URL(path, Astro.site).href;
+// Always the full two words — never "OD" or "Dogman" alone in a title.
+const fullTitle = title ? `${title} — ${brand.name}` : `${brand.name} — ${brand.line}`;
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={brand.name} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={new URL('/images/release-01-jacket.webp', Astro.site).href} />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style is:global>
+/* Design tokens read off the live Original Dogman page on
+   thesportinglifenotebook.com, so this site carries that look rather than a
+   second one: dark green ground, an inset cream panel, gold rules. Type is
+   Zen Kaku Gothic New throughout — light weights and open tracking, so the
+   hierarchy is size and space rather than weight or decoration. The wordmark
+   is the only thing here that is allowed to be loud. */
+:root{
+  /* Japanese colour combination — 白茶 Ivory Buff, 萌木色 Cossack Green,
+     浅緋 Eugenia Red, 青朽葉 Citrine — sampled from the printed swatches and
+     white-balanced off the page. Placed by contrast, not by eye:
+       Cossack Green   ground, and headings on the sheet   5.13:1
+       Ivory Buff      the sheet's hue, and rules on green — never small text
+       Eugenia Red     buttons and status                  4.60:1
+       Citrine         labels, deepened to clear AA        4.65:1 */
+  --cossack:#526B4D;    /* 萌木色 */
+  --ivory:#C5B48C;      /* 白茶  */
+  --eugenia:#AC4F4D;    /* 浅緋  */
+  --citrine:#756B3F;    /* 青朽葉, deepened from #7C7143 to carry text */
+  --green:#526B4D;      /* the ground */
+  --cream:#F4EFE2;      /* the sheet — Ivory Buff's hue, lightened to hold type */
+  --gold:var(--ivory);
+  --bronze:var(--citrine);
+  --terra:var(--eugenia);
+  --red:#EC1B24;        /* the wordmark's red — mark only, never type */
+  --body:#2C3B2A;       /* deep Cossack, 10.36:1 on the sheet */
+  --ink-soft:rgba(44,59,42,.76);
+  --rule:rgba(82,107,77,.22);
+  --measure:34rem;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;color:var(--cream);
+  background:
+    radial-gradient(38rem 26rem at 12% 8%, rgba(197,180,140,.22), transparent 62%),
+    radial-gradient(34rem 24rem at 88% 22%, rgba(172,79,77,.14), transparent 60%),
+    radial-gradient(42rem 30rem at 70% 92%, rgba(117,107,63,.20), transparent 64%),
+    var(--green);
+  background-attachment:fixed;
+  font-family:'Zen Kaku Gothic New',system-ui,sans-serif;
+  font-size:16px;line-height:1.95;font-weight:400;
+  letter-spacing:.015em;
+}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit}
+.wrap{width:min(1080px,90vw);margin-inline:auto}
+
+/* the cream sheet the content sits on */
+/* Deliberately opaque: at 96% over the ground the Citrine labels fall to
+   4.44:1, under AA. The glass lives on the chrome and the cards instead. */
+.sheet{background:var(--cream);color:var(--body);border-radius:26px;
+  box-shadow:0 28px 60px -28px rgba(20,28,18,.45), inset 0 1px 0 rgba(255,255,255,.7);
+  margin:0 auto 26px;width:min(1240px,96vw);padding:clamp(28px,5vw,74px) clamp(20px,4vw,64px)}
+
+.lbl{font-family:'Zen Kaku Gothic New',system-ui,sans-serif;text-transform:uppercase;
+  letter-spacing:.3em;font-size:11px;font-weight:500;color:var(--bronze)}
+/* Light weight and open tracking do the work that a decorative face used to.
+   Nothing is bold, nothing is italic — the hierarchy is size and space. */
+h1,h2,h3{font-family:'Zen Kaku Gothic New',system-ui,sans-serif;font-weight:300;
+  line-height:1.35;margin:0;color:var(--cossack);text-wrap:balance;letter-spacing:.02em}
+h2{font-size:clamp(24px,3vw,33px)}
+h3{font-size:clamp(18px,2vw,22px)}
+p{margin:0 0 1.35em;max-width:var(--measure)}
+
+/* the gold italic lede, straight off the notebook page */
+.lede{font-family:'Zen Kaku Gothic New',system-ui,sans-serif;font-weight:300;
+  color:var(--cossack);font-size:clamp(21px,2.6vw,30px);line-height:1.62;
+  letter-spacing:.03em;max-width:26ch;margin:0 0 26px}
+
+.masthead{padding:20px 0 26px}
+.navpill{display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;
+  /* Apple-style glass: translucent, blurred and saturated, with a hairline
+     top highlight so the edge catches light. */
+  background:rgba(82,107,77,.52);
+  -webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
+  border:1px solid rgba(245,240,230,.22);
+  box-shadow:0 10px 30px -14px rgba(20,28,18,.5), inset 0 1px 0 rgba(255,255,255,.22);
+  border-radius:9999px;
+  padding:12px 12px 12px 26px;width:min(1240px,96vw);margin-inline:auto}
+/* The wordmark is used as supplied — never recoloured — so it needs a light
+   chip to sit on: against the pill its red is 1.33:1, which is invisible. */
+.navpill .home{display:flex;align-items:center;background:var(--cream);
+  border-radius:9999px;padding:7px 16px;text-decoration:none;flex:0 0 auto}
+.navpill .home img{width:clamp(104px,11vw,132px);display:block}
+.nav{display:flex;align-items:center;gap:clamp(12px,1.8vw,24px);flex-wrap:wrap}
+.nav a{display:inline-flex;align-items:center;font-size:13px;letter-spacing:.12em;
+  text-transform:uppercase;text-decoration:none;color:rgba(245,240,230,.82);line-height:1}
+.hasmenu{display:inline-flex;align-items:center}
+.nav a:hover,.nav a[aria-current="page"]{color:var(--ivory)}
+
+.hasmenu{position:relative}
+.hasmenu > a{display:inline-flex;align-items:center;gap:6px}
+.menu{position:absolute;left:0;top:calc(100% + 10px);min-width:190px;z-index:60;
+  background:rgba(82,107,77,.72);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);
+  border:1px solid rgba(245,240,230,.22);border-radius:14px;
+  box-shadow:0 18px 38px -18px rgba(20,28,18,.6), inset 0 1px 0 rgba(255,255,255,.2);
+  padding:8px;display:none;box-shadow:0 18px 34px -16px rgba(0,0,0,.55)}
+.menu a{display:block;padding:9px 12px;border-radius:9px;letter-spacing:.1em;font-size:12.5px}
+.menu a:hover,.menu a:focus-visible{background:rgba(245,240,230,.12);color:var(--ivory)}
+.hasmenu:hover .menu,.hasmenu:focus-within .menu,.hasmenu.open .menu{display:block}
+/* a bridge across the gap so the menu does not close while the pointer travels */
+.hasmenu::after{content:'';position:absolute;left:0;right:0;top:100%;height:12px}
+@media (max-width:640px){
+  .menu{position:static;display:block;background:none;border:0;box-shadow:none;padding:4px 0 0 12px}
+  .hasmenu > a [aria-hidden]{display:none}
+}
+.cta{display:inline-block;background:var(--terra);color:var(--cream);text-decoration:none;
+  font-size:11.5px;letter-spacing:.26em;text-transform:uppercase;font-weight:500;
+  padding:14px 28px;border-radius:9999px;border:1px solid rgba(255,255,255,.18);cursor:pointer;
+  box-shadow:0 6px 16px -8px rgba(120,40,38,.6), inset 0 1px 0 rgba(255,255,255,.3);
+  -webkit-backdrop-filter:saturate(160%);backdrop-filter:saturate(160%)}
+.cta:hover{background:#9a4129}
+.cta.ghost{background:rgba(255,255,255,.42);color:var(--cossack);
+  border:1px solid rgba(117,107,63,.42);
+  -webkit-backdrop-filter:blur(14px) saturate(170%);backdrop-filter:blur(14px) saturate(170%);
+  box-shadow:0 6px 16px -10px rgba(44,59,42,.4), inset 0 1px 0 rgba(255,255,255,.85)}
+.cta.ghost:hover{background:var(--cossack);color:var(--cream)}
+
+.mark{width:clamp(240px,34vw,430px);margin:0 0 18px}
+.eyebrow{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.eyebrow::after{content:'';flex:1;height:1px;background:var(--citrine);opacity:.4}
+section{padding:clamp(40px,6vw,74px) 0}
+hr.rule{height:1px;background:var(--rule);border:0;margin:0}
+
+.status{font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;
+  padding:5px 12px;border-radius:9999px;display:inline-block;border:1px solid currentColor;
+  background:rgba(255,255,255,.45);
+  -webkit-backdrop-filter:blur(10px) saturate(160%);backdrop-filter:blur(10px) saturate(160%)}
+.status.sold{color:var(--terra)}
+.status.upcoming{color:var(--bronze)}
+.status.soon{color:var(--bronze)}
+
+footer{color:var(--cream);padding:8px 0 44px}
+footer a{color:var(--cream)}
+footer .lbl{color:var(--ivory)}
+footer p{color:rgba(245,240,230,.82)}
+footer .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:36px}
+.fine{font-size:12.5px;line-height:1.7;color:rgba(245,240,230,.5);
+  border-top:1px solid rgba(245,240,230,.16);margin-top:36px;padding-top:20px;
+  display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
+@media (max-width:640px){ .navpill{border-radius:22px;padding:16px 18px} }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <nav class="navpill" aria-label="Main">
+    <a class="home" href="/" aria-label={`${brand.name} — home`}>
+      <img src="/images/wordmark.webp" width="1871" height="719" alt={brand.name} />
+    </a>
+    <div class="nav">
+      <a href="/" aria-current={path === '/' ? 'page' : undefined}>Home</a>
+
+      {/* Releases owns a menu. It is a real link as well as a trigger, so it
+          still works with JS off and for anyone who just wants the index. */}
+      <div class="hasmenu">
+        <a href="/releases/" aria-current={path.startsWith('/releases') ? 'page' : undefined}
+           aria-expanded="false" aria-haspopup="true">Releases <span aria-hidden="true">&#9662;</span></a>
+        <div class="menu" role="menu">
+          {categories.map((c) => (
+            <a role="menuitem" href={`/releases/${c.slug}/`}
+               aria-current={path === `/releases/${c.slug}/` ? 'page' : undefined}>{c.label}</a>
+          ))}
+        </div>
+      </div>
+
+      <a href="/story/" aria-current={path === '/story/' ? 'page' : undefined}>The story</a>
+    </div>
+    <a class="cta" href={mailto(`${brand.name} — next release`)}>Get first word</a>
+  </nav>
+</header>
+
+<main class="sheet"><slot /></main>
+
+<footer>
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <div class="lbl">Get first word</div>
+        <p style="margin-top:10px">A release is a small run. The list hears before anyone else.</p>
+        {KIT_FORM_ID
+          ? <form action={`https://app.kit.com/forms/${KIT_FORM_ID}/subscriptions`} method="post" style="display:flex;gap:10px;flex-wrap:wrap">
+              <label class="lbl" for="ft-email" style="position:absolute;left:-9999px">Email</label>
+              <input id="ft-email" type="email" name="email_address" required placeholder="you@example.com"
+                     style="flex:1;min-width:190px;padding:13px 14px;border:1px solid rgba(245,242,235,.3);background:transparent;color:inherit;font:inherit" />
+              <button class="cta" type="submit">Get first word</button>
+            </form>
+          : <a class="cta" href={mailto(`${brand.name} — next release`)}>Get first word</a>}
+      </div>
+      <div>
+        <div class="lbl">The brand</div>
+        <p style="margin-top:10px">{brand.short}</p>
+        <a class="lbl" style="color:var(--tan);text-decoration:none" href={brand.parent.url}>{brand.parent.name} &nearr;</a>
+      </div>
+      <div>
+        <div class="lbl">Enquiries</div>
+        <p style="margin-top:10px"><a href={mailto(`${brand.name} — hello`)}>{brand.contact}</a></p>
+        <p>{brand.founder}</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>Photographs and paintings &copy; Durrell Smith. Paintings signed D.LAMAR.</span>
+      <span>{brand.name}</span>
+    </div>
+  </div>
+</footer>
+
+<OrbNav />
+<script is:inline>
+  // Hover and :focus-within cover mouse and keyboard; touch needs an explicit
+  // first tap that opens the menu instead of following the link.
+  (function(){
+    var box=document.querySelector('.hasmenu'); if(!box) return;
+    var trigger=box.querySelector('a');
+    var coarse=window.matchMedia('(hover: none)').matches;
+    if (coarse && window.innerWidth > 640){
+      trigger.addEventListener('click', function(e){
+        if(!box.classList.contains('open')){ e.preventDefault(); box.classList.add('open');
+          trigger.setAttribute('aria-expanded','true'); }
+      });
+      document.addEventListener('click', function(e){
+        if(!box.contains(e.target)){ box.classList.remove('open');
+          trigger.setAttribute('aria-expanded','false'); }
+      });
+    }
+    box.addEventListener('keydown', function(e){
+      if(e.key==='Escape'){ box.classList.remove('open');
+        trigger.setAttribute('aria-expanded','false'); trigger.focus(); }
+    });
+  })();
+</script>
+</body>
+</html>

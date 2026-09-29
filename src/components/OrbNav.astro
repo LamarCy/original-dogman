@@ -1,0 +1,116 @@
+---
+// The Astral Orb — Durrell's ink-heart painting spun into electron orbits
+// inside a glass ball. Fixed bottom-right on every DASH page; opens the
+// worlds menu (eggs as icons). The ball is the C.P medallion filling the
+// circle: /gateway/medallion-cp.webp. No orbiting electrons.
+// The gateway lives on another origin from here, so these must be absolute —
+// a relative '/' would resolve to the Dogman home page, not the worlds menu.
+const GATEWAY = 'https://cprice.studio';
+
+const WORLDS = [
+  { href: `${GATEWAY}/`, label: 'The Gateway', sub: 'the diamond heart', kind: 'heart', c1: '', c2: '' },
+  { href: `${GATEWAY}/art/#gallery`, label: 'D.LAMAR', sub: 'the painter · the gallery', kind: 'egg', c1: '#DFA8BC', c2: '#B45E7B' },
+  { href: `${GATEWAY}/?world=lamarcy`, label: 'LamarCy', sub: 'the songwriter · the music', kind: 'egg', c1: '#24817E', c2: '#185452' },
+  { href: `${GATEWAY}/art/#music`, label: 'Ashley Smith', sub: 'the voice · her stories', kind: 'egg', c1: '#CAAB46', c2: '#95782F' },
+  { href: 'https://ux.dashcreatives.art', label: 'Durrell Smith', sub: 'ux · the design work', kind: 'egg', c1: '#5F9869', c2: '#366141' },
+  { href: '/', label: 'Original Dogman', sub: 'the sculptor · sculptures & wearable art', kind: 'egg', c1: '#A77E67', c2: '#5F3F35', here: true },
+];
+---
+<nav id="orbnav" aria-label="C.PRICE worlds">
+  <div class="omenu" id="orbmenu" role="menu">
+    {WORLDS.map((w) => (
+      <a class={`oitem${w.here ? ' current' : ''}`} role="menuitem" href={w.href}
+         aria-current={w.here ? 'page' : undefined}>
+        {/* Sticky notes rather than eggs, matching the landing page: each
+            world's two colours become the paper and its curled corner, so
+            colour still tells them apart. */}
+        {w.kind === 'heart' ? (
+          <img class="oicon" src="/gateway/heart.png" alt="" />
+        ) : (
+          <svg class="oicon" viewBox="0 0 26 26" aria-hidden="true">
+            <path d="M2.4 2.4h21.2v16.4l-5 5H2.4z" fill={w.c1} stroke="#3E4A38" stroke-width="1.1"
+                  stroke-linejoin="round" />
+            {/* the curled corner */}
+            <path d="M23.6 18.8h-5v5z" fill={w.c2} stroke="#3E4A38" stroke-width="1.1"
+                  stroke-linejoin="round" />
+            {/* two ruled lines of writing */}
+            <path d="M6.2 8.4h13M6.2 12.4h9.4" stroke={w.c2} stroke-width="1.7" stroke-linecap="round" />
+          </svg>
+        )}
+        <span class="otext">
+          <span class="olabel">{w.label}</span>
+          <span class="osub">{w.sub}</span>
+        </span>
+      </a>
+    ))}
+  </div>
+  <button class="oball" id="orbball" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="orbmenu" title="Navigate the worlds">
+    <span class="onucleus" aria-hidden="true"><img src="/gateway/medallion-cp.webp" alt="" /></span>
+    <span class="osheen" aria-hidden="true"></span>
+  </button>
+</nav>
+
+<style is:global>
+/* Self-hosted so the orb renders identically here and on the gateway, and
+   does not depend on this site's own Google Fonts load. Latin subset: the
+   full Zen Kaku face carries kana and kanji and runs 2.3 MB. */
+@font-face{font-family:'ZenOrb';src:url('/gateway/ZenKaku-400.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'ZenOrb';src:url('/gateway/ZenKaku-500.woff2') format('woff2');font-weight:500;font-display:swap}
+#orbnav{all:unset;display:block;position:fixed;top:auto;left:auto;right:20px;bottom:20px;
+  width:auto;height:auto;margin:0;padding:0;background:none;border:0;z-index:40}
+#orbnav .oball{position:relative;display:block;width:64px;height:64px;border-radius:50%;cursor:pointer;padding:0;
+  border:1px solid rgba(82,107,77,.42);
+  background:#1A1A1A;
+  box-shadow:0 10px 24px rgba(20,20,18,.28),inset 0 1px 6px rgba(255,255,255,.55),inset 0 -6px 12px rgba(20,20,18,.08);
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+#orbnav .oball:hover{transform:scale(1.05);border-color:rgba(82,107,77,.75)}
+#orbnav.open .oball{border-color:rgba(82,107,77,.8);box-shadow:0 10px 26px -6px rgba(44,59,42,.38),inset 0 1px 6px rgba(255,255,255,.5)}
+#orbnav .osheen{position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:radial-gradient(ellipse 42% 30% at 32% 24%,rgba(255,255,255,.6),rgba(255,255,255,0) 70%)}
+#orbnav .onucleus{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+/* The medallion fills the button: no orbiting parts left to clear, so it runs
+   edge to edge. Its own alpha is already a circle, so 100% lands exactly on
+   the button's rim. */
+#orbnav .onucleus img{width:100%;height:100%;object-fit:contain;border-radius:50%}
+
+/* Japanese-minimal chrome: a hairline rather than a heavy keyline, a soft
+   low shadow rather than a hard offset, and the site's own cream ground. */
+#orbnav .omenu{position:absolute;bottom:78px;right:0;min-width:292px;padding:6px;
+  background:rgba(244,239,226,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border:1px solid rgba(82,107,77,.28);border-radius:4px;
+  box-shadow:0 18px 40px -18px rgba(44,59,42,.42);
+  opacity:0;visibility:hidden;transform:translateY(8px) scale(.94);transform-origin:bottom right;
+  pointer-events:none;transition:opacity .16s ease,transform .16s ease,visibility 0s linear .16s}
+#orbnav.open .omenu{opacity:1;visibility:visible;transform:none;pointer-events:auto;transition:opacity .16s ease,transform .16s ease}
+#orbnav .oitem{display:flex;align-items:center;gap:13px;padding:11px 13px;text-decoration:none;color:#526B4D}
+#orbnav .oitem + .oitem{border-top:1px solid rgba(82,107,77,.16)}
+#orbnav .oitem:hover{background:rgba(82,107,77,.09)}
+#orbnav .oicon{width:24px;height:24px;flex:0 0 24px;object-fit:contain}
+#orbnav img.oicon{width:24px;height:22px;flex-basis:24px}
+#orbnav .olabel{display:block;font-family:'ZenOrb',system-ui,sans-serif;text-transform:uppercase;
+  font-size:11px;letter-spacing:.3em;font-weight:500;color:#526B4D}
+#orbnav .osub{display:block;font-family:'ZenOrb',system-ui,sans-serif;font-size:11px;
+  letter-spacing:.06em;color:#756B3F;margin-top:4px;text-transform:none;font-weight:400}
+#orbnav .oitem:hover .osub{color:#756B3F}
+#orbnav .oitem.current{box-shadow:inset 2px 0 0 #AC4F4D}
+#orbnav .oitem.current .olabel{color:#AC4F4D}
+@media (max-width:560px){
+  #orbnav{right:14px;bottom:14px}
+  #orbnav .oball{width:56px;height:56px}
+  #orbnav .omenu{min-width:238px;bottom:70px}
+}
+</style>
+
+<script is:inline>
+(function(){
+  const root = document.getElementById('orbnav'), ball = document.getElementById('orbball');
+  if (!root || !ball) return;
+  const setOpen = (v) => { root.classList.toggle('open', v); ball.setAttribute('aria-expanded', String(v)); };
+  ball.addEventListener('click', (e) => { e.stopPropagation(); setOpen(!root.classList.contains('open')); });
+  document.addEventListener('click', (e) => { if (!root.contains(e.target)) setOpen(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+
+  // The current world is marked server-side via `here`, so no pathname
+  // sniffing is needed on this site.
+})();
+</script>

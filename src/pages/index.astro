@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import { brand, releases, mailto } from '../data/brand.js';
+const r01 = releases[0], r02 = releases[1];
+---
+<Base path="/">
+  <!-- front door: the mark leads, then the italic lede, as on the notebook page -->
+  <section style="padding-top:clamp(12px,2vw,26px)">
+    <div class="lbl">The Outfitter &middot; {brand.founder}</div>
+    <img class="mark" src="/images/wordmark.webp" width="1871" height="719"
+         alt="Original Dogman" style="margin-top:22px" />
+    <p class="lede">{brand.line}</p>
+    <p style="max-width:46ch">{brand.short}</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:26px">
+      <a class="cta" href="/releases/">See the releases</a>
+      <a class="cta ghost" href="/story/">The story</a>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- release 01 as the proof -->
+  <section>
+    <div class="wrap">
+      <div class="eyebrow"><span class="lbl">Release {r01.num} &middot; {r01.year}</span></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:clamp(24px,4vw,56px);align-items:start">
+        <div>
+          <img src={r01.image} alt={r01.alt} width="1400" height="1400" />
+          <img src={r01.detail} alt="Detail of the custom-printed lining." width="500" height="500"
+               style="width:58%;margin-top:14px;border:1px solid var(--rule)" />
+        </div>
+        <div>
+          <h2 style="margin-bottom:16px">{r01.title}</h2>
+          <p style="margin-bottom:18px"><span class="status sold">Sold</span></p>
+          <p>{r01.description}</p>
+          <p class="lbl" style="margin-top:26px">Materials</p>
+          <p style="margin-top:6px">{r01.materials}</p>
+          <p class="lbl" style="margin-top:22px">Provenance</p>
+          <p style="margin-top:6px">{r01.provenance}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- release 02 -->
+  <section>
+    <div class="wrap" style="text-align:center">
+      <div class="lbl">Release {r02.num} &middot; {r02.year}</div>
+      <h2 style="margin:16px 0 18px">On the bench</h2>
+      <p style="margin-inline:auto;max-width:40ch">{r02.description}</p>
+      <a class="cta" style="margin-top:8px" href={mailto(`${brand.name} — next release`)}>Get first word</a>
+    </div>
+  </section>
+</Base>
